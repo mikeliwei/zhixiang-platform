@@ -14,6 +14,7 @@ import com.tongji.knowpost.model.KnowPostDetailRow;
 import com.tongji.knowpost.api.dto.KnowPostDetailResponse;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.tongji.counter.service.CounterService;
+import com.tongji.search.index.SearchIndexService;
 import com.tongji.storage.config.OssProperties;
 import com.tongji.llm.rag.RagIndexService;
 import com.tongji.relation.outbox.OutboxMapper;
@@ -21,6 +22,7 @@ import com.tongji.cache.hotkey.HotKeyDetector;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,8 @@ public class KnowPostServiceImpl implements KnowPostService {
     private final ConcurrentHashMap<String, Object> singleFlight = new ConcurrentHashMap<>();
     private final RagIndexService ragIndexService;
     private final OutboxMapper outboxMapper;
+    @Autowired
+    SearchIndexService searchIndexService;
 
     // 手动编写构造器，Spring的@Qualifier直接标注在参数上（核心）
     public KnowPostServiceImpl(
@@ -200,6 +204,12 @@ public class KnowPostServiceImpl implements KnowPostService {
         // 发布成功后触发一次预索引，减少首次问答冷启动
         try {
             ragIndexService.ensureIndexed(id);
+
+            try {
+                searchIndexService.upsertKnowPost(id);
+            } catch (Exception e) {
+                log.warn("Search index upsert failed for post {}: {}", id, e.getMessage());
+            }
         } catch (Exception e) {
             log.warn("Pre-index after publish failed, post {}: {}", id, e.getMessage());
         }

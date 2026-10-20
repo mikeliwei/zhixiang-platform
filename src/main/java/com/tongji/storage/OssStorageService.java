@@ -24,6 +24,9 @@ public class OssStorageService {
     private final OssProperties props;
 
     public String uploadAvatar(long userId, MultipartFile file) {
+        System.out.println(props.getAccessKeyId());
+        System.out.println(props.getAccessKeySecret());
+
         ensureConfigured();
         String original = file.getOriginalFilename();
         String ext = "";

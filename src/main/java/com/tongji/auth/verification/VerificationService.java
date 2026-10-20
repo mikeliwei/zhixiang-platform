@@ -101,6 +101,7 @@ public class VerificationService {
             throw new BusinessException(ErrorCode.VERIFICATION_RATE_LIMIT);
         }
         stringRedisTemplate.opsForValue().set(key, "1", interval);
+
     }
 
     /**

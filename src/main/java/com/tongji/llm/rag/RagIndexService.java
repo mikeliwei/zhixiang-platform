@@ -11,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -178,6 +180,27 @@ public class RagIndexService {
             return null;
         }
     }
+
+//    private String fetchContent(String url) {
+//        try {
+//            // 改用 ResponseEntity，拿到原始字节，强制utf-8解码，绕开RestTemplate自动编码猜测
+//            ResponseEntity<byte[]> resp = http.getForEntity(url, byte[].class);
+//            byte[] body = resp.getBody();
+//            if (body == null) {
+//                log.warn("fetchContent body is null, url={}", url);
+//                return null;
+//            }
+//            // 强制 UTF-8 解码！核心修复点
+//            String text = new String(body, StandardCharsets.UTF_8);
+//            // ====== 增加打印日志：看拿到的原始文本（重点调试用）======
+//            log.info("fetchContent raw text:\n{}", text);
+//            return text;
+//        } catch (Exception e) {
+//            log.error("Fetch content failed: {}", e.getMessage(), e);
+//            return null;
+//        }
+//    }
+
 
     /**
      * 按 Markdown 标题切段，再交由固定长度切片策略处理。
