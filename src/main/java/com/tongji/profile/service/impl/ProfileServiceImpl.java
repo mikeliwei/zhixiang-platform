@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Optional;
 
 import com.tongji.user.domain.User;
@@ -72,6 +74,8 @@ public class ProfileServiceImpl implements ProfileService {
             throw new BusinessException(ErrorCode.IDENTIFIER_NOT_FOUND, "用户不存在");
         }
 
+//        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+//        byteBuffer.order(ByteOrder.BIG_ENDIAN)
         // 至少要提交一个字段，否则属于无效请求
         boolean hasAnyField = req.nickname() != null || req.bio() != null || req.gender() != null
                 || req.birthday() != null || req.zgId() != null || req.school() != null
