@@ -7,6 +7,7 @@ import com.tongji.counter.service.CounterService;
 import com.tongji.counter.event.CounterEvent;
 import com.tongji.counter.event.CounterEventProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -72,6 +73,7 @@ public class CounterServiceImpl implements CounterService {
      * @return 是否发生状态变化（幂等）
      */
     @Override
+//    @EventListener
     public boolean like(String entityType, String entityId, long userId) {
         return toggle(entityType, entityId, userId, "like", CounterSchema.IDX_LIKE, true);
     }
